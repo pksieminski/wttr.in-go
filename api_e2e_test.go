@@ -1,11 +1,11 @@
 package wttr
 
 import (
+	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"reflect"
 	"testing"
 )
 
@@ -23,13 +23,10 @@ func TestClient_GetCurrentWeather(t *testing.T) {
 	}
 
 	c := getClient(t, s)
-	weather, err := c.GetCurrentWeather("fakecity")
+	actual, err := c.GetCurrentWeather("fakecity")
 
-	if err != nil {
-		t.Fatalf("Client_GetCurrentWeather: unexpected fetch error %s", err)
-	}
-	if !reflect.DeepEqual(weather, expected) {
-		t.Fatalf("ParseWeather: incorrectly parsed weather")
+	if assert.Nil(t, err, "Client_GetCurrentWeather: unexpected fetch error %s", err) {
+		assert.Equal(t, expected, actual, "ParseWeather: incorrectly parsed weather")
 	}
 }
 
@@ -50,9 +47,7 @@ func TestClient_GetCurrentWeather_404(t *testing.T) {
 	c := getClient(t, s)
 	_, err := c.GetCurrentWeather("fakecity")
 
-	if err == nil {
-		t.Fatalf("Client_GetCurrentWeather: expected 404 error did not occur")
-	}
+	assert.NotNil(t, err, "Client_GetCurrentWeather: expected 404 error did not occur")
 }
 
 func setupMux(t *testing.T) *http.ServeMux {
