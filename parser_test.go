@@ -1,7 +1,7 @@
 package wttr
 
 import (
-	"reflect"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -82,22 +82,17 @@ func TestParseWeather_Drizzle(t *testing.T) {
 }
 
 func compareWeather(t *testing.T, body string, expected *Weather) {
-	weather, err := ParseWeather(body)
+	actual, err := ParseWeather(body)
 
-	if err != nil {
-		t.Fatalf("ParseWeather: unexpected error %s", err)
-	}
-	if !reflect.DeepEqual(weather, expected) {
-		t.Fatalf("ParseWeather: incorrectly parsed weather")
+	if assert.Nil(t, err) {
+		assert.Equal(t, expected, actual, "ParseWeather: incorrectly parsed weather")
 	}
 }
 
 func TestParseWeather_Empty(t *testing.T) {
 	_, err := ParseWeather("")
 
-	if err == nil {
-		t.Fatalf("ParseWeather: empty body error did not ocur")
-	}
+	assert.NotNil(t, err, "ParseWeather: empty body error did not occur")
 }
 
 func TestParseWeather_MissingLines(t *testing.T) {
@@ -106,9 +101,7 @@ func TestParseWeather_MissingLines(t *testing.T) {
 `
 	_, err := ParseWeather(body)
 
-	if err == nil {
-		t.Fatalf("ParseWeather: missing lines error did not ocur")
-	}
+	assert.NotNil(t, err, "ParseWeather: missing lines error did not occur")
 }
 
 func TestParseWeather_MalformedTemperature(t *testing.T) {
@@ -122,9 +115,7 @@ func TestParseWeather_MalformedTemperature(t *testing.T) {
 `
 	_, err := ParseWeather(body)
 
-	if err == nil {
-		t.Fatalf("ParseWeather: malformed temperature error did not ocur")
-	}
+	assert.NotNil(t, err, "ParseWeather: malformed temperature error did not occur")
 }
 
 func TestParseWeather_MalformedWindSpeed(t *testing.T) {
@@ -138,7 +129,5 @@ func TestParseWeather_MalformedWindSpeed(t *testing.T) {
 `
 	_, err := ParseWeather(body)
 
-	if err == nil {
-		t.Fatalf("ParseWeather: malformed temperature error did not ocur")
-	}
+	assert.NotNil(t, err, "ParseWeather: malformed temperature error did not ocur")
 }
